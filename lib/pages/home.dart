@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:try_flutter_app/components/add_task_modal.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -8,12 +9,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0; // Untuk melacak indeks yang dipilih
+  int _selectedIndex = 0;
+  final List<String> tasks = []; // Menyimpan daftar tugas
 
   void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index; // Mengubah indeks yang dipilih
+      _selectedIndex = index;
     });
+  }
+
+  void _showAddTaskModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.7,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (_, controller) {
+            return AddTaskModal(
+              onTaskAdded: (title) {
+                setState(() {
+                  tasks.add(title);
+                });
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -29,6 +59,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Column(
         children: [
+          // Kotak motivasi
           Container(
             height: 127.0,
             decoration: BoxDecoration(
@@ -55,7 +86,8 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          const SizedBox(height: 20), // Jarak antara kotak dan tombol
+          const SizedBox(height: 20),
+          // Tombol navigasi Personal dan Work
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Row(
@@ -65,16 +97,11 @@ class _HomePageState extends State<HomePage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.blueAccent,
                     fixedSize: const Size(155, 42),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10.0,
-                    ),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                   ),
-                  onPressed: () {
-                    // Logika untuk navigasi ke "Personal"
-                  },
+                  onPressed: () {},
                   child: const Text("Personal",
                       style: TextStyle(color: Colors.black)),
                 ),
@@ -82,16 +109,11 @@ class _HomePageState extends State<HomePage> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.grey.shade200,
                     fixedSize: const Size(155, 42),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10.0,
-                    ),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                   ),
-                  onPressed: () {
-                    // Logika untuk navigasi ke "Work"
-                  },
+                  onPressed: () {},
                   child:
                       const Text("Work", style: TextStyle(color: Colors.black)),
                 ),
@@ -101,33 +123,11 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 30),
           // Daftar tugas
           Expanded(
-            child: ListView(
+            child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.amber,
-                    borderRadius: BorderRadius.all(Radius.elliptical(10, 10)),
-                  ),
-                  margin: const EdgeInsets.only(bottom: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
-                  child: Row(children: [
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(2.0),
-                      margin: const EdgeInsets.only(right: 10.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.check, color: Colors.white),
-                    ),
-                    const Text("Complete your tasks",
-                        style: TextStyle(color: Colors.white)),
-                  ]),
-                ),
-                Container(
+              itemCount: tasks.length,
+              itemBuilder: (context, index) {
+                return Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade600,
                     borderRadius:
@@ -135,55 +135,33 @@ class _HomePageState extends State<HomePage> {
                   ),
                   margin: const EdgeInsets.only(bottom: 10.0),
                   padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
-                  child: Row(children: [
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(2.0),
-                      margin: const EdgeInsets.only(right: 10.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.check, color: Colors.white),
-                    ),
-                    const Text("Take bath",
-                        style: TextStyle(color: Colors.white)),
-                  ]),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade600,
-                    borderRadius:
-                        const BorderRadius.all(Radius.elliptical(10, 10)),
+                    vertical: 10.0,
+                    horizontal: 10.0,
                   ),
-                  margin: const EdgeInsets.only(bottom: 10.0),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 10.0, horizontal: 10.0),
-                  child: Row(children: [
-                    Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(2.0),
-                      margin: const EdgeInsets.only(right: 10.0),
-                      decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(2.0),
+                        margin: const EdgeInsets.only(right: 10.0),
+                        decoration: const BoxDecoration(
+                          color: Colors.grey,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.check, color: Colors.white),
                       ),
-                      child: const Icon(Icons.check, color: Colors.white),
-                    ),
-                    const Text("Breakfast",
-                        style: TextStyle(color: Colors.white)),
-                  ]),
-                ),
-              ],
+                      Text(tasks[index],
+                          style: const TextStyle(color: Colors.white)),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Logika untuk menambahkan tugas baru
-        },
+        onPressed: () => _showAddTaskModal(context),
         backgroundColor: Colors.blueAccent,
         child: const Icon(Icons.add),
       ),
