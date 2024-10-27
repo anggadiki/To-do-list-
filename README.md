@@ -1,4 +1,4 @@
-# try_flutter_app
+# Try Flutter App
 
 A new Flutter project.
 
